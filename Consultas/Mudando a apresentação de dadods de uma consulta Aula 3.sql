@@ -1,0 +1,94 @@
+/*
+1) Abra o SQL Server Management Studio (SSMS)
+
+2) Verifique se está conectado no banco de dados correto
+
+3) Veja o esquema que está ancorado.
+
+4) Clique no ícone Nova consulta
+
+5) Mostre o conteúdo da tabela
+*/
+
+SELECT * FROM TABELA_DE_PRODUTOS;
+
+-- Mostre os registros com o campo EMBALAGEM, em seguida use o DISTINCT para juntar as linhas com mesmo tipo de embalagem.
+
+SELECT * FROM TABELA_DE_PRODUTOS;
+SELECT EMBALAGEM FROM TABELA_DE_PRODUTOS;
+
+-- Juntando o filtro WHERE para saber as embalagens dos produtos de Maçã:
+
+SELECT DISTINCT EMBALAGEM FROM TABELA_DE_PRODUTOS WHERE SABOR = 'Maca';
+
+--  Mostrando os produtos com as mesmas características em EMBALAGEM e SABOR:
+
+SELECT DISTINCT EMBALAGEM, SABOR FROM TABELA_DE_PRODUTOS;
+
+-- Seleção dos TOP 5 produtos:
+
+SELECT TOP 5 * FROM TABELA_DE_PRODUTOS;
+
+--Seleção dos cinco primeiros produtos com sabor Maca (Maçã)
+
+SELECT TOP 5 * FROM TABELA_DE_PRODUTOS WHERE SABOR = 'Maca';
+
+-- Seleção com ORDER BY para ordenar a tabela por um campo:
+
+SELECT * FROM TABELA_DE_PRODUTOS ORDER BY PRECO_DE_LISTA;
+
+-- Seleção ordenando por ASCENDENTE e DESCENDENTE:
+
+SELECT * FROM TABELA_DE_PRODUTOS ORDER BY PRECO_DE_LISTA ASC;
+SELECT * FROM TABELA_DE_PRODUTOS ORDER BY PRECO_DE_LISTA DESC;
+
+-- Usando uma quebra sendo ordenado por EMBALAGEM e quebrado pelo NOME_DO_PRODUTO
+
+SELECT * FROM TABELA_DE_PRODUTOS ORDER BY EMBALAGEM, NOME_DO_PRODUTO;
+
+-- Para mostrar quantos produtos tem com sabor Laranja e agrupados por embalagem:
+
+SELECT EMBALAGEM, COUNT(*) AS NUMERO_DE_CLIENTES FROM TABELA_DE_PRODUTOS 
+WHERE SABOR = 'Laranja' GROUP BY EMBALAGEM;
+
+-- Usando SUM, e HAVING ao inves do WHERE quando se tem uma consulta ordenada:
+
+SELECT ESTADO, SUM(LIMITE_DE_CREDITO) AS CREDITO
+FROM TABELA_DE_CLIENTES 
+GROUP BY ESTADO
+HAVING SUM(LIMITE_DE_CREDITO) >= 900000;
+
+-- Seleção usando MAX e MIN:
+
+SELECT EMBALAGEM, MAX(PRECO_DE_LISTA) AS PRECO_MAX, MIN(PRECO_DE_LISTA) AS PRECO_MIN
+FROM TABELA_DE_PRODUTOS 
+WHERE PRECO_DE_LISTA >= 10
+GROUP BY  EMBALAGEM;
+
+SELECT EMBALAGEM, MAX(PRECO_DE_LISTA) AS PRECO_MAX, MIN(PRECO_DE_LISTA) AS PRECO_MIN
+FROM TABELA_DE_PRODUTOS 
+WHERE PRECO_DE_LISTA >= 10
+GROUP BY  EMBALAGEM
+HAVING MAX(PRECO_DE_LISTA) >= 20;
+
+-- Para mostrar produtos divididos por faixa de preços aplicando CASE WHEN (Função):
+
+SELECT NOME_DO_PRODUTO, PRECO_DE_LISTA,
+(CASE WHEN PRECO_DE_LISTA >= 12 THEN 'PRODUTO CARO'
+WHEN PRECO_DE_LISTA >= 7 AND PRECO_DE_LISTA < 12 THEN 'PRODUTO EM CONTA'
+ELSE 'PRODUTO BARATO' END) AS CLASSIFICACAO
+FROM TABELA_DE_PRODUTOS
+WHERE SABOR = 'Manga'
+ORDER BY CLASSIFICACAO;
+
+-- Aplicando todos os conceitos:
+
+    SELECT 
+    (CASE WHEN PRECO_DE_LISTA >= 12 THEN 'PRODUTO CARO'
+          WHEN PRECO_DE_LISTA >= 7 AND PRECO_DE_LISTA < 12 THEN 'PRODUTO EM CONTA'
+          ELSE 'PRODUTO BARATO' END) AS CLASSIFICACAO, COUNT(*) AS NUMERO_DE_PRODUTOS
+    FROM TABELA_DE_PRODUTOS
+    GROUP BY (CASE WHEN PRECO_DE_LISTA >= 12 THEN 'PRODUTO CARO'
+          WHEN PRECO_DE_LISTA >= 7 AND PRECO_DE_LISTA < 12 THEN 'PRODUTO EM CONTA'
+          ELSE 'PRODUTO BARATO' END);
+
